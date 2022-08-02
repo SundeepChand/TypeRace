@@ -1,0 +1,6 @@
+Features:
+- Matchmaking for users, when they click on create room
+- Users can race via typing
+- Their metrics are aggregated via streams to create leaderboard
+- Users can search for other users
+- Users can follow other users
