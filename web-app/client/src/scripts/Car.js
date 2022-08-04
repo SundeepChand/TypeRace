@@ -3,11 +3,19 @@ import * as CANNON from 'cannon'
 
 
 class Car {
+  static physicsMaterial = new CANNON.Material('car-wheels')
+
   constructor(mass, engineForce, topSpeed, reverseTopSpeed) {
     this.mass = mass
     this.engineForce = engineForce
     this.topSpeed = topSpeed
     this.reverseTopSpeed = -reverseTopSpeed
+  }
+
+  init(scene, world, gltfFile, position, rotation, scale) {
+    this.loadModel(scene, gltfFile, position, rotation, scale)
+    this.initPhysics(world)
+    this.initControls()
   }
 
   loadModel(scene, gltfFile, position, rotation, scale) {
@@ -26,6 +34,7 @@ class Car {
         gltf.scene.position.x = position.x
         gltf.scene.position.y = position.y
         gltf.scene.position.z = position.z
+        gltf.scene.castShadow = true
         this.gltf = gltf
         console.log(gltf.scene.scale)
         scene.add(gltf.scene)
@@ -38,8 +47,7 @@ class Car {
 
   initPhysics(world) {
     const shape = new CANNON.Box(new CANNON.Vec3(0.25, 0.54, 0.15))
-    this.physicsMaterial = new CANNON.Material('car-wheels')
-    this.carBody = new CANNON.Body({ mass: this.mass, material: this.physicsMaterial })
+    this.carBody = new CANNON.Body({ mass: this.mass, material: Car.physicsMaterial })
     this.carBody.addShape(shape)
     console.log(this.position)
     this.carBody.position.set(this.position.x, this.position.y, this.position.z + 1)
@@ -47,7 +55,7 @@ class Car {
     world.addBody(this.carBody)
   }
 
-  initControls(world) {
+  initControls() {
     window.addEventListener('keydown', (event) => {
       console.log(event.key)
       if (event.key === 'ArrowUp') {
@@ -71,9 +79,9 @@ class Car {
     }
   }
 
-  updateCarPosition() {
+  updateCarPosition(zOffset = 0.0) {
     this.gltf.scene.position.copy(this.carBody.position)
-    this.gltf.scene.position.z -= 0.1
+    this.gltf.scene.position.z += zOffset
   }
 }
 

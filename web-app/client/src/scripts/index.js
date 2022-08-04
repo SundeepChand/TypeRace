@@ -4,7 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as CannonDebugRenderer from './DebugRenderer'
 import * as dat from 'dat.gui'
 import Stats from 'stats.js'
-import Ground from './Ground'
+import DragStrip from './DragStrip'
 import Car from './Car'
 import Lamborghini from '../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
 import Ferrari from '../assets/models/vehicles/ferrari_348/ferrari_348.glb'
@@ -36,25 +36,17 @@ directionalLight.castShadow = true
 directionalLight.position.set(60, -60, 20)
 scene.add(directionalLight)
 
-const ground = new Ground(60, 240)
-scene.add(ground.mesh)
-world.addBody(ground.body)
+scene.fog = new THREE.Fog(0xbfbfbf, 5, 60)
 
-const roadGeometry = new THREE.BoxGeometry(2, 240, 0.05)
-const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x1f1f1f, side: THREE.FrontSide })
-const road = new THREE.Mesh(roadGeometry, roadMaterial)
-scene.add(road)
+const dragStrip = new DragStrip(scene, world, 60, 240)
 
-const car1 = new Car()
-car1.loadModel(scene, Lamborghini, new THREE.Vector3(0.5, 0, 0.165), new THREE.Vector3(90, 180, 0), 0.2)
-car1.initPhysics(world)
+const car1 = new Car(1500, 6000, 8, 1)
+car1.init(scene, world, Lamborghini, new THREE.Vector3(0.5, 0, 0.165), new THREE.Vector3(90, 180, 0), 0.2)
 
 const car2 = new Car(1500, 6000, 8, 1)
-car2.loadModel(scene, Ferrari, new THREE.Vector3(-0.5, 0, 0.035), new THREE.Vector3(90, -90, 0), 0.4)
-car2.initPhysics(world)
-car2.initControls(world)
+car2.init(scene, world, Ferrari, new THREE.Vector3(-0.5, 0, 0.035), new THREE.Vector3(90, -90, 0), 0.4)
 
-const carContact = new CANNON.ContactMaterial(ground.physicsMaterial, car2.physicsMaterial, {
+const carContact = new CANNON.ContactMaterial(dragStrip.surface, Car.physicsMaterial, {
   friction: 0.0,
   restitution: 0.3,
   contactEquationStiffness: 1e8,
@@ -115,7 +107,8 @@ const cannonDebugRenderer = new THREE.CannonDebugRenderer(scene, world)
 const updatePhysics = () => {
   world.step(1 / 60)
 
-  car2.updateCarPosition()
+  car1.updateCarPosition(0.015)
+  car2.updateCarPosition(-0.12)
 
   // camera.position.y = car2.carBody.position.y - 1
 }
