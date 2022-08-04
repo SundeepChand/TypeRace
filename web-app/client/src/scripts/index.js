@@ -1,14 +1,24 @@
 import * as THREE from 'three'
+import * as CANNON from 'cannon'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import * as CannonDebugRenderer from './DebugRenderer'
 import * as dat from 'dat.gui'
+import Ground from './Ground'
+import Car from './Car'
 import Lamborghini from '../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
+import Ferrari from '../assets/models/vehicles/ferrari_348/ferrari_348.glb'
 
 // Debug
 const gui = new dat.GUI()
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
+
+// Cannon.js World
+const world = new CANNON.World()
+world.gravity.set(0, 0, -10)
+world.broadphase = new CANNON.NaiveBroadphase()
+world.solver.iterations = 40
 
 // Scene
 const scene = new THREE.Scene()
@@ -17,39 +27,28 @@ scene.background = new THREE.Color(0x8fd8ff)
 const light = new THREE.AmbientLight(0xffffff, 0.5); // soft white light
 scene.add(light);
 
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8)
+const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9)
 directionalLight.castShadow = true
 directionalLight.position.set(60, -60, 20)
 scene.add(directionalLight)
 
-const groundGeometry = new THREE.PlaneGeometry(60, 60)
-const groundMaterial = new THREE.MeshStandardMaterial({ color: 0x33ff4e, side: THREE.FrontSide })
-groundMaterial.roughness = 1
-groundMaterial.metalness = 0
-const ground = new THREE.Mesh(groundGeometry, groundMaterial)
-scene.add(ground)
+const ground = new Ground(60, 60)
+scene.add(ground.mesh)
+world.addBody(ground.body)
 
 const roadGeometry = new THREE.BoxGeometry(2, 60, 0.05)
 const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x1f1f1f, side: THREE.FrontSide })
 const road = new THREE.Mesh(roadGeometry, roadMaterial)
 scene.add(road)
 
-const loader = new GLTFLoader()
-loader.load(
-  Lamborghini,
-  (gltf) => {
-    gltf.scene.scale.x = gltf.scene.scale.y = gltf.scene.scale.z = 0.2
-    gltf.scene.rotateX(90 * Math.PI / 180)
-    gltf.scene.rotateY(180 * Math.PI / 180)
-    gltf.scene.position.z = 1
-    gltf.scene.position.y = 0.8
-    // directionalLight.target = gltf.scene
-    scene.add(gltf.scene)
-  },
-  (xhr) => {
-    console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-  }
-)
+const car1 = new Car()
+car1.loadModel(scene, Lamborghini, new THREE.Vector3(0.5, 0, 0.165), new THREE.Vector3(90, 180, 0), 0.2)
+car1.initPhysics(world)
+
+const car2 = new Car()
+car2.loadModel(scene, Ferrari, new THREE.Vector3(-0.5, 0, 0.035), new THREE.Vector3(90, -90, 0), 0.4)
+car2.initPhysics(world)
+
 
 /**
  * Sizes
@@ -79,9 +78,9 @@ window.addEventListener('resize', () => {
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
 camera.position.x = 0
-camera.position.y = 0
-camera.position.z = 2
-camera.rotateX(50 * Math.PI / 180)
+camera.position.y = -1
+camera.position.z = 1
+camera.rotateX(65 * Math.PI / 180)
 scene.add(camera)
 
 // Controls
@@ -96,13 +95,23 @@ const renderer = new THREE.WebGLRenderer({
 })
 renderer.setSize(sizes.width, sizes.height)
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.outputEncoding = THREE.sRGBEncoding
+
+const cannonDebugRenderer = new THREE.CannonDebugRenderer(scene, world)
+
+const updatePhysics = () => {
+  world.step(1 / 60)
+}
 
 const animate = () => {
   requestAnimationFrame(animate)
 
   // Update Orbital Controls
   controls.update()
+
+  cannonDebugRenderer.update()
+
+  updatePhysics()
 
   renderer.render(scene, camera)
 }
