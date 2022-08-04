@@ -3,6 +3,7 @@ import * as CANNON from 'cannon'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import * as CannonDebugRenderer from './DebugRenderer'
 import * as dat from 'dat.gui'
+import Stats from 'stats.js'
 import Ground from './Ground'
 import Car from './Car'
 import Lamborghini from '../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
@@ -10,6 +11,9 @@ import Ferrari from '../assets/models/vehicles/ferrari_348/ferrari_348.glb'
 
 // Debug
 const gui = new dat.GUI()
+const stats = new Stats()
+stats.showPanel(0)
+document.body.appendChild(stats.dom)
 
 // Canvas
 const canvas = document.querySelector('canvas.webgl')
@@ -22,7 +26,7 @@ world.solver.iterations = 40
 
 // Scene
 const scene = new THREE.Scene()
-scene.background = new THREE.Color(0x8fd8ff)
+scene.background = new THREE.Color(0xd9f4fa)
 
 const light = new THREE.AmbientLight(0xffffff, 0.5); // soft white light
 scene.add(light);
@@ -32,11 +36,11 @@ directionalLight.castShadow = true
 directionalLight.position.set(60, -60, 20)
 scene.add(directionalLight)
 
-const ground = new Ground(60, 60)
+const ground = new Ground(60, 240)
 scene.add(ground.mesh)
 world.addBody(ground.body)
 
-const roadGeometry = new THREE.BoxGeometry(2, 60, 0.05)
+const roadGeometry = new THREE.BoxGeometry(2, 240, 0.05)
 const roadMaterial = new THREE.MeshStandardMaterial({ color: 0x1f1f1f, side: THREE.FrontSide })
 const road = new THREE.Mesh(roadGeometry, roadMaterial)
 scene.add(road)
@@ -45,9 +49,18 @@ const car1 = new Car()
 car1.loadModel(scene, Lamborghini, new THREE.Vector3(0.5, 0, 0.165), new THREE.Vector3(90, 180, 0), 0.2)
 car1.initPhysics(world)
 
-const car2 = new Car()
+const car2 = new Car(1500, 6000, 8, 1)
 car2.loadModel(scene, Ferrari, new THREE.Vector3(-0.5, 0, 0.035), new THREE.Vector3(90, -90, 0), 0.4)
 car2.initPhysics(world)
+car2.initControls(world)
+
+const carContact = new CANNON.ContactMaterial(ground.physicsMaterial, car2.physicsMaterial, {
+  friction: 0.0,
+  restitution: 0.3,
+  contactEquationStiffness: 1e8,
+  contactEquationRelaxation: 3,
+})
+world.addContactMaterial(carContact)
 
 
 /**
@@ -77,7 +90,7 @@ window.addEventListener('resize', () => {
  */
 // Base camera
 const camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-camera.position.x = 0
+// camera.position.x = -0.5
 camera.position.y = -1
 camera.position.z = 1
 camera.rotateX(65 * Math.PI / 180)
@@ -101,10 +114,16 @@ const cannonDebugRenderer = new THREE.CannonDebugRenderer(scene, world)
 
 const updatePhysics = () => {
   world.step(1 / 60)
+
+  car2.updateCarPosition()
+
+  // camera.position.y = car2.carBody.position.y - 1
 }
 
 const animate = () => {
   requestAnimationFrame(animate)
+
+  stats.begin()
 
   // Update Orbital Controls
   controls.update()
@@ -114,5 +133,7 @@ const animate = () => {
   updatePhysics()
 
   renderer.render(scene, camera)
+
+  stats.end()
 }
 animate()

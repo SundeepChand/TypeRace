@@ -11,7 +11,8 @@ class Ground {
     this.mesh = new THREE.Mesh(groundGeometry, groundMaterial)
 
     const groundShape = new CANNON.Plane()
-    const groundBody = new CANNON.Body({ mass: 0, shape: groundShape })
+    this.physicsMaterial = new CANNON.Material('ground')
+    const groundBody = new CANNON.Body({ mass: 0, shape: groundShape, material: this.physicsMaterial })
     this.body = groundBody
   }
 }
