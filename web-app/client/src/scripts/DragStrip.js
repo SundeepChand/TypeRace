@@ -3,6 +3,7 @@ import * as CANNON from 'cannon'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
 import Tree from '../assets/models/trees/tree-0.glb'
+import FinishLineTexture from '../assets/textures/finish_line.png'
 
 class TreeModel {
   constructor(scene, transforms) {
@@ -51,8 +52,19 @@ class Road {
   }
 }
 
+class FinishLine {
+  constructor(width, height, positionY) {
+    const geometry = new THREE.BoxGeometry(width - 0.05, height, 0.01)
+    geometry.translate(0, positionY, 0.023)
+    const texture = new THREE.TextureLoader().load(FinishLineTexture)
+    const finishLineMaterial = new THREE.MeshPhongMaterial({ map: texture, side: THREE.FrontSide })
+    this.mesh = new THREE.Mesh(geometry, finishLineMaterial)
+  }
+}
+
 class DragStrip {
   roadWidth = 2
+  finishLinePositionY = 200
 
   constructor(scene, world, width, height) {
     const ground = new Ground(width, height)
@@ -66,6 +78,9 @@ class DragStrip {
     scene.add(ground.mesh)
     scene.add(road.mesh)
     world.add(road.body)
+
+    const finishLine = new FinishLine(this.roadWidth, 1, this.finishLinePositionY)
+    scene.add(finishLine.mesh)
 
     for (let i = 0; i < 40; i++) {
       const treeTransforms = {
