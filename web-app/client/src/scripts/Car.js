@@ -1,9 +1,11 @@
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 import * as CANNON from 'cannon'
 
+import Lamborghini from '../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
+import Ferrari from '../assets/models/vehicles/ferrari_348/ferrari_348.glb'
 
 class Car {
-  static physicsMaterial = new CANNON.Material('car-wheels')
+  physicsMaterial = new CANNON.Material('car-wheels')
 
   constructor(mass, engineForce, topSpeed, reverseTopSpeed) {
     this.mass = mass
@@ -47,7 +49,7 @@ class Car {
 
   initPhysics(world) {
     const shape = new CANNON.Box(new CANNON.Vec3(0.25, 0.54, 0.15))
-    this.carBody = new CANNON.Body({ mass: this.mass, material: Car.physicsMaterial })
+    this.carBody = new CANNON.Body({ mass: this.mass, material: this.physicsMaterial })
     this.carBody.addShape(shape)
     console.log(this.position)
     this.carBody.position.set(this.position.x, this.position.y, this.position.z + 1)
@@ -57,13 +59,11 @@ class Car {
 
   initControls() {
     window.addEventListener('keydown', (event) => {
-      console.log(event.key)
       if (event.key === 'ArrowUp') {
         this.moveForward()
       } else if (event.key === 'ArrowDown') {
         this.moveBackward()
       }
-      console.log(this.carBody.velocity)
     })
   }
 
@@ -85,4 +85,31 @@ class Car {
   }
 }
 
-export default Car
+class CarFactory {
+  static createCar(carModel, scene, world, dragStrip, carProperties) {
+    const car = new Car(carProperties.mass, carProperties.engineForce, carProperties.topSpeed, carProperties.reverseTopSpeed)
+
+    const carContact = new CANNON.ContactMaterial(dragStrip.surface, car.physicsMaterial, {
+      friction: 0.0,
+      restitution: 0.3,
+      contactEquationStiffness: 1e8,
+      contactEquationRelaxation: 3,
+    })
+    world.addContactMaterial(carContact)
+
+    switch (carModel) {
+      case 'ferrari':
+        car.init(scene, world, Ferrari, carProperties.position, carProperties.rotation, carProperties.scale)
+        break
+      case 'lamborghini':
+        car.init(scene, world, Lamborghini, carProperties.position, carProperties.rotation, carProperties.scale)
+        break
+      default:
+        car.init(scene, world, Ferrari, carProperties.position, carProperties.rotation, carProperties.scale)
+    }
+
+    return car;
+  }
+}
+
+export default CarFactory

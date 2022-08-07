@@ -5,9 +5,7 @@ import * as CannonDebugRenderer from './DebugRenderer'
 import * as dat from 'dat.gui'
 import Stats from 'stats.js'
 import DragStrip from './DragStrip'
-import Car from './Car'
-import Lamborghini from '../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
-import Ferrari from '../assets/models/vehicles/ferrari_348/ferrari_348.glb'
+import CarFactory from './Car'
 
 // Debug
 const gui = new dat.GUI()
@@ -40,19 +38,25 @@ scene.fog = new THREE.Fog(0xbfbfbf, 5, 60)
 
 const dragStrip = new DragStrip(scene, world, 60, 240)
 
-const car1 = new Car(1500, 6000, 8, 1)
-car1.init(scene, world, Lamborghini, new THREE.Vector3(0.5, 0, 0.165), new THREE.Vector3(90, 180, 0), 0.2)
-
-const car2 = new Car(1500, 6000, 8, 1)
-car2.init(scene, world, Ferrari, new THREE.Vector3(-0.5, 0, 0.035), new THREE.Vector3(90, -90, 0), 0.4)
-
-const carContact = new CANNON.ContactMaterial(dragStrip.surface, Car.physicsMaterial, {
-  friction: 0.0,
-  restitution: 0.3,
-  contactEquationStiffness: 1e8,
-  contactEquationRelaxation: 3,
+const car1 = CarFactory.createCar('lamborghini', scene, world, dragStrip, {
+  mass: 1500,
+  engineForce: 6000,
+  topSpeed: 8,
+  reverseTopSpeed: 1,
+  position: new THREE.Vector3(0.5, 0, 0.165),
+  rotation: new THREE.Vector3(90, 180, 0),
+  scale: 0.2,
 })
-world.addContactMaterial(carContact)
+
+const car2 = CarFactory.createCar('ferrari', scene, world, dragStrip, {
+  mass: 1500,
+  engineForce: 6000,
+  topSpeed: 8,
+  reverseTopSpeed: 1,
+  position: new THREE.Vector3(-0.5, 0, 0.035),
+  rotation: new THREE.Vector3(90, -90, 0),
+  scale: 0.4,
+})
 
 
 /**
