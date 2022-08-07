@@ -34,7 +34,7 @@ directionalLight.castShadow = true
 directionalLight.position.set(60, -60, 20)
 scene.add(directionalLight)
 
-scene.fog = new THREE.Fog(0xbfbfbf, 5, 60)
+scene.fog = new THREE.Fog(0xbfbfbf, 0, 50)
 
 const dragStrip = new DragStrip(scene, world, 60, 240)
 
@@ -125,7 +125,7 @@ const animate = () => {
   // Update Orbital Controls
   controls.update()
 
-  cannonDebugRenderer.update()
+  // cannonDebugRenderer.update()
 
   updatePhysics()
 
