@@ -87,18 +87,18 @@ class GameView {
     // this.controls.enableDamping = true
   }
 
-  handleWindowResize() {
+  handleWindowResize = () => {
     // Update sizes
     WINDOW_SIZE.width = window.innerWidth
     WINDOW_SIZE.height = window.innerHeight
 
     // Update camera
-    camera.aspect = WINDOW_SIZE.width / WINDOW_SIZE.height
-    camera.updateProjectionMatrix()
+    this.camera.aspect = WINDOW_SIZE.width / WINDOW_SIZE.height
+    this.camera.updateProjectionMatrix()
 
     // Update renderer
-    renderer.setSize(WINDOW_SIZE.width, WINDOW_SIZE.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    this.renderer.setSize(WINDOW_SIZE.width, WINDOW_SIZE.height)
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   }
 
   initRenderer() {
