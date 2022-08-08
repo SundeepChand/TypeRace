@@ -19,7 +19,7 @@ class Car {
     this.reverseTopSpeed = -reverseTopSpeed
   }
 
-  init(scene, world, gltfFile, position, rotation, scale) {
+  init = (scene, world, gltfFile, position, rotation, scale) => {
     this.position = position
     this.rotation = rotation
     this.scale = scale
@@ -30,7 +30,7 @@ class Car {
     this.initControls()
   }
 
-  loadModel(scene, gltfFile, position, rotation, scale) {
+  loadModel = (scene, gltfFile, position, rotation, scale) => {
 
     const loader = new GLTFLoader()
     loader.load(
@@ -45,7 +45,6 @@ class Car {
         gltf.scene.position.z = position.z
         gltf.scene.castShadow = true
         this.gltf = gltf
-        console.log(gltf.scene.scale)
         scene.add(gltf.scene)
       },
       (xhr) => {
@@ -54,7 +53,7 @@ class Car {
     )
   }
 
-  initCamera() {
+  initCamera = () => {
     this.camera = new THREE.PerspectiveCamera(75, WINDOW_SIZE.width / WINDOW_SIZE.height, 0.1, 100)
     this.camera.position.x = this.position.x + this.cameraOffset.x
     this.camera.position.y = this.position.y + this.cameraOffset.y
@@ -63,17 +62,16 @@ class Car {
     this.camera.name = this.name
   }
 
-  initPhysics(world) {
+  initPhysics = (world) => {
     const shape = new CANNON.Box(new CANNON.Vec3(0.25, 0.54, 0.15))
     this.carBody = new CANNON.Body({ mass: this.mass, material: this.physicsMaterial })
     this.carBody.addShape(shape)
-    console.log(this.position)
     this.carBody.position.set(this.position.x, this.position.y, this.position.z + 1)
     this.carBody.linearDamping = 0.9
     world.addBody(this.carBody)
   }
 
-  initControls() {
+  initControls = () => {
     window.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowUp') {
         this.moveForward()
@@ -83,19 +81,19 @@ class Car {
     })
   }
 
-  moveForward() {
+  moveForward = () => {
     if (this.carBody.velocity.y < this.topSpeed) {
       this.carBody.velocity.y += (this.engineForce / this.mass)
     }
   }
 
-  moveBackward() {
+  moveBackward = () => {
     if (this.carBody.velocity.y > this.reverseTopSpeed) {
       this.carBody.velocity.y -= (this.engineForce / this.mass)
     }
   }
 
-  updateCarPosition(zOffset = 0.0) {
+  updateCarPosition = (zOffset = 0.0) => {
     this.gltf.scene.position.copy(this.carBody.position)
     this.gltf.scene.position.z += zOffset
   }
@@ -104,7 +102,7 @@ class Car {
 class CarFactory {
   static carCount = 0
 
-  static createCar(carModel, scene, world, dragStrip, carProperties) {
+  static createCar = (carModel, scene, world, dragStrip, carProperties) => {
     const carName = `car-${this.carCount}`
     const car = new Car(carName, carProperties.mass, carProperties.engineForce, carProperties.topSpeed, carProperties.reverseTopSpeed)
 

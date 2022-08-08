@@ -9,12 +9,12 @@ class TextArea {
     this.init()
   }
 
-  init() {
+  init = () => {
     this.updateTextInDOM()
     window.addEventListener('keydown', this.handleUserTyped)
   }
 
-  updateTextInDOM() {
+  updateTextInDOM = () => {
     this.typedDom.innerHTML = this.untypedDom.innerHTML = ''
     this.typedDom.style.padding = this.untypedDom.style.padding = '0px'
 
@@ -45,7 +45,7 @@ class TextArea {
     this.updateTextInDOM()
   }
 
-  getText() {
+  getText = () => {
     // return `A Python dictionary with Redis as the storage back-end. Redis is a great database for all kinds of
     // environments; from simple to complex. redis-dict tries to make using Redis as simple as using a
     // dictionary. redis-dict stores data in Redis with key-values, this is according to Redis best

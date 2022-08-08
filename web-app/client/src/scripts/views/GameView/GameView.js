@@ -33,7 +33,7 @@ class GameView {
     window.addEventListener('resize', this.handleWindowResize)
   }
 
-  initLighting() {
+  initLighting = () => {
     const light = new THREE.AmbientLight(0xffffff, 0.5) // soft white light
     this.scene.add(light);
 
@@ -45,7 +45,7 @@ class GameView {
     this.scene.fog = new THREE.Fog(0xbfbfbf, 0, 50)
   }
 
-  initDragRaceArena() {
+  initDragRaceArena = () => {
     const dragStrip = new DragStrip(this.scene, this.world, 60, 240)
 
     this.car1 = CarFactory.createCar('lamborghini', this.scene, this.world, dragStrip, {
@@ -69,7 +69,7 @@ class GameView {
     })
   }
 
-  updatePhysics() {
+  updatePhysics = () => {
     this.world.step(1 / 60)
 
     this.car1.updateCarPosition(0.015)
@@ -78,7 +78,7 @@ class GameView {
     this.camera.position.y = this.car2.carBody.position.y - 0.9
   }
 
-  initCamera() {
+  initCamera = () => {
     this.camera = this.car2.camera
     this.scene.add(this.camera)
 
@@ -101,7 +101,7 @@ class GameView {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   }
 
-  initRenderer() {
+  initRenderer = () => {
     /**
      * Renderer
      */
