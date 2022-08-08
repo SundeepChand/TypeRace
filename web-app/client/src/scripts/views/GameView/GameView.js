@@ -4,6 +4,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import Stats from 'stats.js'
 import DragStrip from './DragStrip'
 import CarFactory from './Car'
+import { WINDOW_SIZE } from '../../constants'
 
 class GameView {
   constructor() {
@@ -26,7 +27,10 @@ class GameView {
 
     this.initLighting()
     this.initDragRaceArena()
-    this.initRendererAndCamera()
+    this.initCamera()
+    this.initRenderer()
+
+    window.addEventListener('resize', this.handleWindowResize)
   }
 
   initLighting() {
@@ -74,43 +78,37 @@ class GameView {
     this.camera.position.y = this.car2.carBody.position.y - 0.9
   }
 
-  initRendererAndCamera() {
-    const sizes = {
-      width: window.innerWidth,
-      height: window.innerHeight
-    }
-
-    window.addEventListener('resize', () => {
-      // Update sizes
-      sizes.width = window.innerWidth
-      sizes.height = window.innerHeight
-
-      // Update camera
-      camera.aspect = sizes.width / sizes.height
-      camera.updateProjectionMatrix()
-
-      // Update renderer
-      renderer.setSize(sizes.width, sizes.height)
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    })
-
-    this.camera = new THREE.PerspectiveCamera(75, sizes.width / sizes.height, 0.1, 100)
-    this.camera.position.x = -0.5
-    this.camera.position.y = -0.9
-    this.camera.position.z = 0.7
-    this.camera.rotateX(65 * Math.PI / 180)
+  initCamera() {
+    this.camera = this.car2.camera
     this.scene.add(this.camera)
+
     // Controls
     // this.controls = new OrbitControls(this.camera, this.canvas)
     // this.controls.enableDamping = true
+  }
 
+  handleWindowResize() {
+    // Update sizes
+    WINDOW_SIZE.width = window.innerWidth
+    WINDOW_SIZE.height = window.innerHeight
+
+    // Update camera
+    camera.aspect = WINDOW_SIZE.width / WINDOW_SIZE.height
+    camera.updateProjectionMatrix()
+
+    // Update renderer
+    renderer.setSize(WINDOW_SIZE.width, WINDOW_SIZE.height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  }
+
+  initRenderer() {
     /**
      * Renderer
      */
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas
     })
-    this.renderer.setSize(sizes.width, sizes.height)
+    this.renderer.setSize(WINDOW_SIZE.width, WINDOW_SIZE.height)
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.renderer.outputEncoding = THREE.sRGBEncoding
   }

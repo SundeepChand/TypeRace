@@ -1,13 +1,18 @@
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import * as THREE from 'three'
 import * as CANNON from 'cannon'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { WINDOW_SIZE } from '../../constants'
 
-import Lamborghini from '../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
-import Ferrari from '../assets/models/vehicles/ferrari_348/ferrari_348.glb'
+import Lamborghini from '../../../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
+import Ferrari from '../../../assets/models/vehicles/ferrari_348/ferrari_348.glb'
 
 class Car {
   physicsMaterial = new CANNON.Material('car-wheels')
+  cameraOffset = new THREE.Vector3(0, -1, 0.7)
+  cameraXAngleInDegrees = 65
 
-  constructor(mass, engineForce, topSpeed, reverseTopSpeed) {
+  constructor(carName, mass, engineForce, topSpeed, reverseTopSpeed) {
+    this.name = carName
     this.mass = mass
     this.engineForce = engineForce
     this.topSpeed = topSpeed
@@ -15,15 +20,17 @@ class Car {
   }
 
   init(scene, world, gltfFile, position, rotation, scale) {
+    this.position = position
+    this.rotation = rotation
+    this.scale = scale
+
     this.loadModel(scene, gltfFile, position, rotation, scale)
+    this.initCamera()
     this.initPhysics(world)
     this.initControls()
   }
 
   loadModel(scene, gltfFile, position, rotation, scale) {
-    this.position = position
-    this.rotation = rotation
-    this.scale = scale
 
     const loader = new GLTFLoader()
     loader.load(
@@ -45,6 +52,15 @@ class Car {
         console.log((xhr.loaded / xhr.total * 100) + '% loaded');
       }
     )
+  }
+
+  initCamera() {
+    this.camera = new THREE.PerspectiveCamera(75, WINDOW_SIZE.width / WINDOW_SIZE.height, 0.1, 100)
+    this.camera.position.x = this.position.x + this.cameraOffset.x
+    this.camera.position.y = this.position.y + this.cameraOffset.y
+    this.camera.position.z = this.position.z + this.cameraOffset.z
+    this.camera.rotateX(this.cameraXAngleInDegrees * Math.PI / 180)
+    this.camera.name = this.name
   }
 
   initPhysics(world) {
@@ -86,8 +102,11 @@ class Car {
 }
 
 class CarFactory {
+  static carCount = 0
+
   static createCar(carModel, scene, world, dragStrip, carProperties) {
-    const car = new Car(carProperties.mass, carProperties.engineForce, carProperties.topSpeed, carProperties.reverseTopSpeed)
+    const carName = `car-${this.carCount}`
+    const car = new Car(carName, carProperties.mass, carProperties.engineForce, carProperties.topSpeed, carProperties.reverseTopSpeed)
 
     const carContact = new CANNON.ContactMaterial(dragStrip.surface, car.physicsMaterial, {
       friction: 0.0,
@@ -107,6 +126,7 @@ class CarFactory {
       default:
         car.init(scene, world, Ferrari, carProperties.position, carProperties.rotation, carProperties.scale)
     }
+    this.carCount++
 
     return car;
   }

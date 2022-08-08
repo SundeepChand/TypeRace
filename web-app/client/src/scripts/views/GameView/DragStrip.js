@@ -2,8 +2,8 @@ import * as THREE from 'three'
 import * as CANNON from 'cannon'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
 
-import Tree from '../assets/models/trees/tree-0.glb'
-import FinishLineTexture from '../assets/textures/finish_line.png'
+import Tree from '../../../assets/models/trees/tree-0.glb'
+import FinishLineTexture from '../../../assets/textures/finish_line.png'
 
 class TreeModel {
   constructor(scene, transforms) {

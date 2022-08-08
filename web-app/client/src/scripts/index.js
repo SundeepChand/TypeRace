@@ -1,3 +1,3 @@
-import GameView from './Game'
+import GameView from './views/GameView/GameView'
 
 (new GameView()).run()
