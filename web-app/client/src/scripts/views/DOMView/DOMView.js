@@ -1,6 +1,8 @@
 class TextArea {
+  punctuations = ['.', ',', '-', ';', ':', '?', '/', '>', '<', '\'', '"']
+  typedText = ''
+
   constructor() {
-    this.typedText = ''
     this.untypedText = this.getText()
 
     this.typedDom = document.querySelector('#typed')
@@ -34,6 +36,9 @@ class TextArea {
     console.log(event.key)
     if (event.key === this.untypedText[0]) {
       this.typedText += event.key
+      if (this.punctuations.indexOf(event.key) !== -1) {
+        this.typedText += '&lrm;'
+      }
       this.untypedText = this.untypedText.substring(1)
     }
 
@@ -46,11 +51,8 @@ class TextArea {
   }
 
   getText = () => {
-    // return `A Python dictionary with Redis as the storage back-end. Redis is a great database for all kinds of
-    // environments; from simple to complex. redis-dict tries to make using Redis as simple as using a
-    // dictionary. redis-dict stores data in Redis with key-values, this is according to Redis best
-    // practices. This also allows other non-Python programs to access the data stored in Redis.`
-    return 'A Python dictionary with Redis as the storage back-end.'
+    return `A Python dictionary with Redis as the storage back-end. Redis is a great database for all kinds of environments; from simple to complex. redis-dict tries to make using Redis as simple as using a dictionary. redis-dict stores data in Redis with key-values, this is according to Redis best practices. This also allows other non-Python programs to access the data stored in Redis.`
+    // return 'A Python dictionary with Redis as the storage back-end.'
   }
 }
 

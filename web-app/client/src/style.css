@@ -48,13 +48,16 @@ body {
     padding: 0;
     height: min-content;
     word-spacing: 0px;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 50%;
 }
 
 .text-area .typed {
     color: white;
-    border-right: 1px solid white;
 }
 
 .text-area .untyped {
     color: darkgray;
+    border-left: 1px solid white;
 }
