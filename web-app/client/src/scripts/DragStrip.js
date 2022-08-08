@@ -65,6 +65,7 @@ class FinishLine {
 class DragStrip {
   roadWidth = 2
   finishLinePositionY = 200
+  treesCount = 70
 
   constructor(scene, world, width, height) {
     const ground = new Ground(width, height)
@@ -82,7 +83,7 @@ class DragStrip {
     const finishLine = new FinishLine(this.roadWidth, 1, this.finishLinePositionY)
     scene.add(finishLine.mesh)
 
-    for (let i = 0; i < 40; i++) {
+    for (let i = 0; i < this.treesCount; i++) {
       const treeTransforms = {
         position: {
           x: Math.random() * 10 * this.roadWidth + this.roadWidth,
