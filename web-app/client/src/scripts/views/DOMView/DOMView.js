@@ -13,7 +13,6 @@ class TextArea {
 
   init = () => {
     this.updateTextInDOM()
-    window.addEventListener('keydown', this.handleUserTyped)
   }
 
   updateTextInDOM = () => {
@@ -32,21 +31,16 @@ class TextArea {
     this.untypedDom.innerHTML += this.untypedText
   }
 
-  handleUserTyped = (event) => {
-    console.log(event.key)
-    if (event.key === this.untypedText[0]) {
-      this.typedText += event.key
-      if (this.punctuations.indexOf(event.key) !== -1) {
-        this.typedText += '&lrm;'
-      }
-      this.untypedText = this.untypedText.substring(1)
-    }
+  isCorrectKeyPressed = (key) => {
+    return key === this.untypedText[0]
+  }
 
-    if (this.untypedText.length === 0) {
-      this.typedText = ''
-      this.untypedText = this.getText()
+  handleCorrectKeyPressed = (key) => {
+    this.typedText += key
+    if (this.punctuations.indexOf(key) !== -1) {
+      this.typedText += '&lrm;'
     }
-
+    this.untypedText = this.untypedText.substring(1)
     this.updateTextInDOM()
   }
 

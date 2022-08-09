@@ -1,0 +1,19 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "Backend server for TypeRace web-app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SundeepChand/TypeRace.git"
+  },
+  "author": "Sundeep Chand",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SundeepChand/TypeRace/issues"
+  },
+  "homepage": "https://github.com/SundeepChand/TypeRace#readme"
+}
