@@ -21,6 +21,10 @@ class GameView {
     this.world.broadphase = new CANNON.NaiveBroadphase()
     this.world.solver.iterations = 40
 
+    // Player and other cars
+    this.player = null
+    this.other = null
+
     // Scene
     this.scene = new THREE.Scene()
     this.scene.background = new THREE.Color(0xd9f4fa)
@@ -46,40 +50,31 @@ class GameView {
   }
 
   initDragRaceArena = () => {
-    const dragStrip = new DragStrip(this.scene, this.world, 60, 240)
+    this.dragStrip = new DragStrip(this.scene, this.world, 60, 240)
+  }
 
-    this.car1 = CarFactory.createCar('lamborghini', this.scene, this.world, dragStrip, {
-      mass: 1500,
-      engineForce: 6000,
-      topSpeed: 8,
-      reverseTopSpeed: 1,
-      position: new THREE.Vector3(0.5, 0, 0.165),
-      rotation: new THREE.Vector3(90, 180, 0),
-      scale: 0.2,
-    })
+  createPlayerCar = (carName, xPosition = 0.5) => {
+    this.player = this.player = CarFactory.createCar(carName, this.scene, this.world, this.dragStrip, xPosition)
+    this.camera = this.player.camera
+  }
 
-    this.car2 = CarFactory.createCar('ferrari', this.scene, this.world, dragStrip, {
-      mass: 1500,
-      engineForce: 6000,
-      topSpeed: 8,
-      reverseTopSpeed: 1,
-      position: new THREE.Vector3(-0.5, 0, 0.035),
-      rotation: new THREE.Vector3(90, -90, 0),
-      scale: 0.4,
-    })
+  createOpponentCar = (carName, xPosition = -0.5) => {
+    this.other = CarFactory.createCar(carName, this.scene, this.world, this.dragStrip, xPosition)
   }
 
   updatePhysics = () => {
     this.world.step(1 / 60)
 
-    this.car1.updateCarPosition(0.015)
-    this.car2.updateCarPosition(-0.12)
-
-    this.camera.position.y = this.car2.carBody.position.y - 0.9
+    if (this.player !== null && this.other !== null) {
+      this.player.updateCarPosition()
+      this.other.updateCarPosition()
+    }
   }
 
   initCamera = () => {
-    this.camera = this.car2.camera
+    this.camera = new THREE.PerspectiveCamera(75, WINDOW_SIZE.width / WINDOW_SIZE.height, 0.1, 100)
+    this.camera.position.y = 190
+    this.camera.position.z = 20
     this.scene.add(this.camera)
 
     // Controls

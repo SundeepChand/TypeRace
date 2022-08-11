@@ -6,17 +6,41 @@ import { WINDOW_SIZE } from '../../constants'
 import Lamborghini from '../../../assets/models/vehicles/lamborghini_gallardo/lamborghini_gallardo.glb'
 import Ferrari from '../../../assets/models/vehicles/ferrari_348/ferrari_348.glb'
 
+const carParameters = {
+  ferrari: {
+    mass: 1500,
+    engineForce: 6000,
+    topSpeed: 8,
+    reverseTopSpeed: 1,
+    position: new THREE.Vector3(-0.5, 0, 0.035),
+    rotation: new THREE.Vector3(90, -90, 0),
+    scale: 0.4,
+    zOffset: -0.12,
+  },
+  lamborghini: {
+    mass: 1500,
+    engineForce: 6000,
+    topSpeed: 8,
+    reverseTopSpeed: 1,
+    position: new THREE.Vector3(0.5, 0, 0.165),
+    rotation: new THREE.Vector3(90, 180, 0),
+    scale: 0.22,
+    zOffset: 0.015,
+  }
+}
+
 class Car {
   physicsMaterial = new CANNON.Material('car-wheels')
   cameraOffset = new THREE.Vector3(0, -1, 0.7)
   cameraXAngleInDegrees = 65
 
-  constructor(carName, mass, engineForce, topSpeed, reverseTopSpeed) {
+  constructor(carName, mass, engineForce, topSpeed, reverseTopSpeed, zOffset) {
     this.name = carName
     this.mass = mass
     this.engineForce = engineForce
     this.topSpeed = topSpeed
     this.reverseTopSpeed = -reverseTopSpeed
+    this.zOffset = zOffset
   }
 
   init = (scene, world, gltfFile, position, rotation, scale) => {
@@ -81,6 +105,10 @@ class Car {
     })
   }
 
+  getPosition = () => {
+    return this.carBody.position
+  }
+
   moveForward = () => {
     if (this.carBody.velocity.y < this.topSpeed) {
       this.carBody.velocity.y += (this.engineForce / this.mass)
@@ -93,18 +121,22 @@ class Car {
     }
   }
 
-  updateCarPosition = (zOffset = 0.0) => {
+  updateCarPosition = () => {
     this.gltf.scene.position.copy(this.carBody.position)
-    this.gltf.scene.position.z += zOffset
+    this.gltf.scene.position.z += this.zOffset
+    this.gltf.scene.position.x = this.position.x
+    this.camera.position.y = this.carBody.position.y - 0.9
   }
 }
 
 class CarFactory {
   static carCount = 0
 
-  static createCar = (carModel, scene, world, dragStrip, carProperties) => {
+  static createCar = (carModel, scene, world, dragStrip, xPosition) => {
     const carName = `car-${this.carCount}`
-    const car = new Car(carName, carProperties.mass, carProperties.engineForce, carProperties.topSpeed, carProperties.reverseTopSpeed)
+    const carProperties = carParameters[carModel]
+    carProperties.position.x = xPosition
+    const car = new Car(carName, carProperties.mass, carProperties.engineForce, carProperties.topSpeed, carProperties.reverseTopSpeed, carProperties.zOffset)
 
     const carContact = new CANNON.ContactMaterial(dragStrip.surface, car.physicsMaterial, {
       friction: 0.0,
