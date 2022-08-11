@@ -3,4 +3,4 @@ export const WINDOW_SIZE = {
   height: window.innerHeight
 }
 
-export const SERVER_URL = 'http://localhost:3001'
+export const SERVER_URL = ''
