@@ -21,8 +21,6 @@ class TypingMetricsModel {
         this.getWordsPerMinute(),
         this.getUserTypingAccuracyPercentage(),
       ))
-
-      console.log(this.userTypingSpeed)
     }, 2000)
   }
 
@@ -46,6 +44,22 @@ class TypingMetricsModel {
     if (this.totalCharactersTyped === 0)
       return 100
     return (this.correctCharactersTyped / this.totalCharactersTyped) * 100
+  }
+
+  formatMetricsIntoArray = () => {
+    const typingMetrics = {
+      timestamps: [],
+      wpm: [],
+      accuracy: [],
+    }
+
+    this.userTypingSpeed.forEach(dataPoint => {
+      typingMetrics.timestamps.push(dataPoint.timeElapsedInSeconds)
+      typingMetrics.wpm.push(Number.parseFloat(dataPoint.wpm).toFixed(2))
+      typingMetrics.accuracy.push(Number.parseFloat(dataPoint.accuracy).toFixed(2))
+    })
+
+    return typingMetrics
   }
 }
 

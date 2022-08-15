@@ -72,13 +72,22 @@ body {
     animation: blinker 2s linear infinite;
 }
 
-.start-menu {
-    width: 100vw;
-    height: 100vh;
+.full-screen-menu {
+    width: 80vw;
+    height: 80vh;
     position: fixed;
-    top: 0;
-    left: 0;
+    top: 10vh;
+    left: 10vw;
     display: flex;
     justify-content: center;
     align-items: center;
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: saturate(110%) blur(10px);
+    border-radius: 10px;
+}
+
+.game-over-menu__chart-container {
+    position: relative;
+    width: 65vw;
+    max-width: 900px;
 }

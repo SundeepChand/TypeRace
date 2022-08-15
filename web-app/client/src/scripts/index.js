@@ -47,8 +47,11 @@ class GameController {
 
   handleGameOver = () => {
     this.stopRecordingUserTypingSpeed()
-    console.log('..Game over..')
     this.domView.textArea.hide()
+    this.domView.gameOverMenu.plotTypingMetricsChartWithData(
+      this.dataStore.typingMetrics.formatMetricsIntoArray()
+    )
+    this.domView.gameOverMenu.show()
   }
 
   startRacing = () => {
@@ -83,7 +86,7 @@ class GameController {
       this.startRacing()
     }
 
-    document.querySelector('#btn-start').style.display = 'none' // TODO: Improve this part
+    this.domView.startMenu.hide()
     this.gameView.addPlayerReachedFinishLineCallback(this.handleGameOver)
   }
 }
