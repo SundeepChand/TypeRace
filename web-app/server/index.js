@@ -51,13 +51,6 @@ io.on('connection', (socket) => {
       io.emit(`room-${roomId}-player-moved`, data)
     })
   })
-
-  // socket.join(`room:${roomId}`)
-
-  //   socket.on(`room:${roomId}-player-moved`, (data) => {
-  //     io.to(`room:${roomId}`).emit(`${data.name} moved`)
-  //   })
-
 })
 
 httpServer.listen(process.env.PORT || 3001)

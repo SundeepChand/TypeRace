@@ -58,8 +58,16 @@ class GameView {
     this.camera = this.player.camera
   }
 
+  hasPlayerReachedFinishLine = () => {
+    return (this.player?.carBody.position.y >= this.dragStrip.finishLinePositionY) ?? false
+  }
+
   createOpponentCar = (carName, xPosition = -0.5) => {
     this.other = CarFactory.createCar(carName, this.scene, this.world, this.dragStrip, xPosition)
+  }
+
+  addPlayerReachedFinishLineCallback = (callback) => {
+    this.handlePlayerReachedFinishLine = callback
   }
 
   updatePhysics = () => {
@@ -68,6 +76,11 @@ class GameView {
     if (this.player !== null && this.other !== null) {
       this.player.updateCarPosition()
       this.other.updateCarPosition()
+    }
+
+    if (this.hasPlayerReachedFinishLine()) {
+      this.handlePlayerReachedFinishLine()
+      cancelAnimationFrame(this.animationId)
     }
   }
 
@@ -109,7 +122,7 @@ class GameView {
   }
 
   run = () => {
-    requestAnimationFrame(this.run)
+    this.animationId = requestAnimationFrame(this.run)
 
     this.stats.begin()
 
