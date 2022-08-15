@@ -81,13 +81,36 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: rgba(255, 255, 255, 0.3);
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.5);
     backdrop-filter: saturate(110%) blur(10px);
     border-radius: 10px;
 }
 
 .game-over-menu__chart-container {
     position: relative;
-    width: 65vw;
     max-width: 900px;
+    width: 70%;
+}
+
+.game-over-menu__button-container {
+    padding-top: 20px
+}
+
+.button {
+    width: 90px;
+    height: 40px;
+    border-radius: 4px;
+    outline: none;
+    border: none;
+    box-shadow: 1px 1px 5px 0.5px gray;
+    background-color: #ffd700;
+    color: white;
+    font-weight: 600;
+    font-size: 20px;
+}
+
+.button:hover {
+    cursor: pointer;
+    background-color: #eac700;
 }

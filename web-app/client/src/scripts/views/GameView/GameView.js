@@ -92,7 +92,8 @@ class GameView {
   }
 
   initCamera = () => {
-    this.camera = new THREE.PerspectiveCamera(75, WINDOW_SIZE.width / WINDOW_SIZE.height, 0.1, 100)
+    this.defaultCamera = new THREE.PerspectiveCamera(75, WINDOW_SIZE.width / WINDOW_SIZE.height, 0.1, 100)
+    this.camera = this.defaultCamera
     this.camera.position.y = 195
     this.camera.position.z = 18
     this.scene.add(this.camera)
@@ -141,6 +142,14 @@ class GameView {
     this.renderer.render(this.scene, this.camera)
 
     this.stats.end()
+  }
+
+  reset = () => {
+    this.camera = this.defaultCamera
+    this.curGameState = GameState.RUNNING
+    this.scene.remove(this.player.gltf.scene) // TODO: Remove the Cannon physics body as well
+    this.scene.remove(this.other.gltf.scene) // TODO: Remove the Cannon physics body as well
+    this.player = this.other = null
   }
 }
 

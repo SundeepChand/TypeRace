@@ -67,6 +67,10 @@ class Model {
   constructor() {
     this.typingMetrics = new TypingMetricsModel()
   }
+
+  resetTypingMetrics = () => {
+    this.typingMetrics = new TypingMetricsModel()
+  }
 }
 
 export default Model

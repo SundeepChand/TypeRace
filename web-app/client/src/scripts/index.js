@@ -17,6 +17,7 @@ class GameController {
 
   registerEventListeners = () => {
     document.querySelector('#btn-start').addEventListener('click', this.startGame)
+    document.querySelector('#btn-restart').addEventListener('click', this.resetGame)
   }
 
   isOnlyASingleCharacter = (char) => {
@@ -88,6 +89,14 @@ class GameController {
 
     this.domView.startMenu.hide()
     this.gameView.addPlayerReachedFinishLineCallback(this.handleGameOver)
+  }
+
+  resetGame = () => {
+    this.gameView.reset()
+    this.dataStore.resetTypingMetrics()
+    this.domView.resetTextArea()
+    this.domView.gameOverMenu.hide()
+    this.domView.startMenu.show()
   }
 }
 
