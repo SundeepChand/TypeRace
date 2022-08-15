@@ -19,7 +19,7 @@ body {
     outline: none;
 }
 
-.type-screen {
+.overlay-menu-top {
     display: flex;
     justify-content: center;
     position: fixed;
@@ -32,7 +32,7 @@ body {
     padding-top: 40px;
 }
 
-.text-area {
+.overlay-menu-top__text-container {
     width: 80vw;
     max-width: 800px;
     height: 110px;
@@ -43,7 +43,7 @@ body {
     justify-content: left;
 }
 
-.text-area span {
+.overlay-menu-top__text-container span {
     margin: 0;
     padding: 0;
     height: min-content;
@@ -53,13 +53,23 @@ body {
     width: 50%;
 }
 
-.text-area .typed {
+.overlay-menu-top__text-container .typed {
     color: white;
 }
 
-.text-area .untyped {
+.overlay-menu-top__text-container .untyped {
     color: darkgray;
     border-left: 1px solid white;
+}
+
+@keyframes blinker {
+    50% {
+        opacity: 0.4;
+    }
+}
+
+.overlay-menu-top__text-container--text-blinking {
+    animation: blinker 2s linear infinite;
 }
 
 .start-menu {

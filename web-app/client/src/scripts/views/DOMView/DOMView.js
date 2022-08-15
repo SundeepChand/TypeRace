@@ -4,7 +4,7 @@ class TextArea {
 
   constructor() {
     this.untypedText = this.getText()
-
+    this.root = document.querySelector('#typing-text-area')
     this.typedDom = document.querySelector('#typed')
     this.untypedDom = document.querySelector('#untyped')
 
@@ -13,6 +13,16 @@ class TextArea {
 
   init = () => {
     this.updateTextInDOM()
+    console.log(this.root.style.display)
+    this.hide()
+  }
+
+  show = () => {
+    this.root.style.display = ''
+  }
+
+  hide = () => {
+    this.root.style.display = 'none'
   }
 
   updateTextInDOM = () => {
@@ -50,9 +60,25 @@ class TextArea {
   }
 }
 
+class WaitingText {
+  constructor() {
+    this.root = document.querySelector('#waiting-text')
+    this.hide()
+  }
+
+  hide = () => {
+    this.root.style.display = 'none'
+  }
+
+  show = () => {
+    this.root.style.display = ''
+  }
+}
+
 class DOMView {
   constructor() {
     this.textArea = new TextArea()
+    this.waitingForOpponentText = new WaitingText()
   }
 }
 

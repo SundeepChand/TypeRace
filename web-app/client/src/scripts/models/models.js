@@ -1,24 +1,28 @@
-class TypingMetricsModel {
-  typingMetrics = {
-    timeElapsedInSeconds: 0,
-    charactersTyped: 0,
-    userTypingSpeed: [{
-      time: 0,
-      wpm: 0
-    }]
+class TypingMetricsDataPoint {
+  constructor(timeElapsedInSeconds, wpm, accuracy) {
+    this.timeElapsedInSeconds = timeElapsedInSeconds
+    this.wpm = wpm
+    this.accuracy = accuracy
   }
+}
+
+class TypingMetricsModel {
+  timeElapsedInSeconds = 0
+  totalCharactersTyped = 0
+  correctCharactersTyped = 0
+  userTypingSpeed = []
 
   startRecordingUserTypingSpeed = () => {
     this.recordingInterval = setInterval(() => {
 
-      this.typingMetrics.timeElapsedInSeconds += 2
-      this.typingMetrics.userTypingSpeed.push({
-        time: this.typingMetrics.timeElapsedInSeconds,
-        wpm: this.getWordsPerMinute()
-      })
+      this.timeElapsedInSeconds += 2
+      this.userTypingSpeed.push(new TypingMetricsDataPoint(
+        this.timeElapsedInSeconds,
+        this.getWordsPerMinute(),
+        this.getUserTypingAccuracyPercentage(),
+      ))
 
-      console.log(this.typingMetrics)
-
+      console.log(this.userTypingSpeed)
     }, 2000)
   }
 
@@ -27,11 +31,21 @@ class TypingMetricsModel {
   }
 
   getWordsPerMinute = () => {
-    return (this.typingMetrics.charactersTyped * 12) / (this.typingMetrics.timeElapsedInSeconds)
+    return (this.correctCharactersTyped * 12) / (this.timeElapsedInSeconds)
   }
 
-  incrementCharactersTyped = () => {
-    (this.typingMetrics.charactersTyped)++
+  incrementCorrectCharactersTyped = () => {
+    (this.correctCharactersTyped)++
+  }
+
+  incrementTotalCharactersTyped = () => {
+    (this.totalCharactersTyped)++
+  }
+
+  getUserTypingAccuracyPercentage = () => {
+    if (this.totalCharactersTyped === 0)
+      return 100
+    return (this.correctCharactersTyped / this.totalCharactersTyped) * 100
   }
 }
 

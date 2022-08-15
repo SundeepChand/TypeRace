@@ -26,20 +26,16 @@ class GameService {
   }
 
   initSockets = () => {
-    this.socket.on(`joined-room-${this.roomId}`, (data) => {
-      if (data.name !== this.playerId) {
-        if (this.playerId === 'player-1') {
-          this.gameView.createOpponentCar("ferrari", -0.5)
-        } else if (this.playerId === 'player-2') {
-          this.gameView.createOpponentCar("lamborghini", 0.5)
-        }
-      }
-    })
-
     this.socket.on(`room-${this.roomId}-player-moved`, (data) => {
       if (this.playerId !== data.name) {
         this.gameView.other.moveForward()
       }
+    })
+  }
+
+  onPlayerJoined = (onPlayerJoinCallback) => {
+    this.socket.on(`joined-room-${this.roomId}`, (data) => {
+      onPlayerJoinCallback(data, this.playerId)
     })
   }
 

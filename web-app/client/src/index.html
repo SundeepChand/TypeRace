@@ -12,10 +12,16 @@
   <canvas class="webgl"></canvas>
 
   <div class="container">
-    <div class="type-screen">
-      <div class="text-area">
+    <div id="typing-text-area" class="overlay-menu-top">
+      <div class="overlay-menu-top__text-container">
         <span id="typed" class="typed" dir="rtl"></span>
         <span id="untyped" class="untyped"></span>
+      </div>
+    </div>
+
+    <div id="waiting-text" class="overlay-menu-top">
+      <div class="overlay-menu-top__text-container overlay-menu-top__text-container--text-blinking">
+        Waiting for opponent to join...
       </div>
     </div>
 

@@ -6,6 +6,11 @@ import DragStrip from './DragStrip'
 import CarFactory from './Car'
 import { WINDOW_SIZE } from '../../constants'
 
+const GameState = Object.freeze({
+  RUNNING: 0,
+  GAME_OVER: 1
+})
+
 class GameView {
   constructor() {
     // Debug
@@ -33,6 +38,8 @@ class GameView {
     this.initDragRaceArena()
     this.initCamera()
     this.initRenderer()
+
+    this.curGameState = GameState.RUNNING
 
     window.addEventListener('resize', this.handleWindowResize)
   }
@@ -78,16 +85,16 @@ class GameView {
       this.other.updateCarPosition()
     }
 
-    if (this.hasPlayerReachedFinishLine()) {
+    if (this.curGameState === GameState.RUNNING && this.hasPlayerReachedFinishLine()) {
       this.handlePlayerReachedFinishLine()
-      cancelAnimationFrame(this.animationId)
+      this.curGameState = GameState.GAME_OVER
     }
   }
 
   initCamera = () => {
     this.camera = new THREE.PerspectiveCamera(75, WINDOW_SIZE.width / WINDOW_SIZE.height, 0.1, 100)
-    this.camera.position.y = 190
-    this.camera.position.z = 20
+    this.camera.position.y = 195
+    this.camera.position.z = 18
     this.scene.add(this.camera)
 
     // Controls
@@ -122,7 +129,7 @@ class GameView {
   }
 
   run = () => {
-    this.animationId = requestAnimationFrame(this.run)
+    requestAnimationFrame(this.run)
 
     this.stats.begin()
 
